@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jual Pulsa</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #d0e8f2, #f7d1cd); /* Gradasi biru pastel ke pink lembut */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        width: 380px;
+        border: 2px solid #ff6f91; /* Border pink cerah */
+    }
+
+    h1 {
+        text-align: center;
+        color: #ff6f91; /* Warna header cerah dan elegan */
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #4a4a4a; /* Warna teks label lebih gelap */
+        font-weight: 600;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    input:focus, select:focus {
+        border-color: #ff6f91; /* Border berubah saat fokus */
+        outline: none;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background-color: #ff6f91; /* Warna tombol cerah */
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #ff3b6d; /* Warna lebih gelap saat hover */
+    }
+
+    .details {
+        margin-top: 30px;
+        color: #333;
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    /* Style untuk input telepon */
+    .phone-input {
+        display: flex;
+        align-items: center;
+    }
+
+    .phone-input span {
+        padding: 8px;
+        background-color: #ddd;
+        border: 1px solid #ddd;
+        border-radius: 4px 0 0 4px;
+    }
+
+    .phone-input input {
+        border-radius: 0 4px 4px 0;
+        border-left: none;
+    }
+
+    /* Styling untuk section voucher */
+    .voucher-section {
+        display: none;
+    }
+
+</style>
+
+</head>
+<body>
+    <div class="container">
+        <h1>Jual pulsa</h1>
+        <form id="productForm">
+            <!-- Pilih Jenis Produk -->
+            <div class="form-group">
+                <label for="productType">Pilih Produk:</label>
+                <select id="productType" name="productType" onchange="toggleProductForm()" required>
+                    <option value="">--Pilih Produk--</option>
+                    <option value="pulsa">Pulsa Reguler</option>
+                    <option value="listrik">Pulsa Listrik</option>
+                </select>
+            </div>
+
+            <!-- Form Pulsa Reguler -->
+            <div id="pulsaSection" style="display: none;">
+                <div class="form-group">
+                    <label for="provider">Pilih Kartu:</label>
+                    <select id="provider" name="provider">
+                        <option value="">--Pilih Kartu--</option>
+                        <option value="telkomsel">Indosat</option>
+                        <option value="xl">Axis</option>
+                        <option value="indosat">Telkomsel</option>
+                        <option value="tri">Tri</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Nomor Telepon:</label>
+                    <div class="phone-input">
+                        <span>+62</span>
+                        <input type="tel" id="phone" name="phone" maxlength="11" pattern="[0-9]{10,11}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Pulsa Listrik -->
+            <div id="listrikSection" style="display: none;">
+                <div class="form-group">
+                    <label for="meterNumber">Nomor Meter:</label>
+                    <input type="text" id="meterNumber" name="meterNumber" maxlength="12" pattern="[0-9]{11,12}">
+                </div>
+            </div>
+
+            <!-- Jumlah dan Voucher -->
+            <div class="form-group">
+                <label for="amount">Jumlah:</label>
+                <select id="amount" name="amount" required>
+                    <option value="">--Pilih Jumlah--</option>
+                    <option value="20000">Rp 20,000</option>
+                    <option value="50000">Rp 50,000</option>
+                    <option value="100000">Rp 100,000</option>
+                    <<option value="150000">Rp 150,000</option>
+                    <option value="200000">Rp 200,000</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="voucher">Apakah Anda memiliki voucher?</label>
+                <select id="voucher" name="voucher" onchange="toggleVoucherCode()">
+                    <option value="no">Tidak</option>
+                    <option value="yes">Ya</option>
+                </select>
+            </div>
+            <div class="form-group" id="voucherCodeSection" style="display: none;">
+                <label for="voucherCode">Masukkan Kode Voucher:</label>
+                <input type="text" id="voucherCode" name="voucherCode">
+            </div>
+            <button type="button" onclick="calculateTotal()">Hitung Total</button>
+        </form>
+        <div id="total" class="details"></div>
+    </div>
+
+    <script>
+        function toggleProductForm() {
+            const productType = document.getElementById('productType').value;
+            document.getElementById('pulsaSection').style.display = productType === 'pulsa' ? 'block' : 'none';
+            document.getElementById('listrikSection').style.display = productType === 'listrik' ? 'block' : 'none';
+        }
+
+        function toggleVoucherCode() {
+            const voucher = document.getElementById('voucher').value;
+            document.getElementById('voucherCodeSection').style.display = voucher === 'yes' ? 'block' : 'none';
+        }
+
+        function calculateTotal() {
+            const productType = document.getElementById('productType').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const voucher = document.getElementById('voucher').value;
+            const voucherCode = document.getElementById('voucherCode').value;
+
+            let total = amount;
+            let voucherDiscount = 0;
+
+            if (productType === 'pulsa') {
+                const provider = document.getElementById('provider').value;
+                const phone = document.getElementById('phone').value;
+                if (!provider || !phone || !amount) {
+                    alert('Harap isi data Pulsa Reguler dengan benar!');
+                    return;
+                }
+            } else if (productType === 'listrik') {
+                const meterNumber = document.getElementById('meterNumber').value;
+                if (!meterNumber || !amount) {
+                    alert('Harap isi data Pulsa Listrik dengan benar!');
+                    return;
+                }
+            } else {
+                alert('Pilih jenis produk terlebih dahulu!');
+                return;
+            }
+
+            if (voucher === 'yes' && voucherCode === 'PULSAMURAH') {
+                voucherDiscount = total * 0.03;
+            }
+            const tax = total * 0.05;
+            total = total - voucherDiscount + tax;
+
+            document.getElementById('total').innerHTML = `
+                <p><strong>Jenis Produk:</strong> ${productType === 'pulsa' ? 'Pulsa Reguler' : 'Pulsa Listrik'}</p>
+                <p><strong>Jumlah:</strong> Rp ${amount.toLocaleString('id-ID')}</p>
+                <p><strong>Diskon Voucher:</strong> Rp ${voucherDiscount.toLocaleString('id-ID')}</p>
+                <p><strong>PPN (5%):</strong> Rp ${tax.toLocaleString('id-ID')}</p>
+                <h2><strong>Total Pembayaran:</strong> Rp ${total.toLocaleString('id-ID')}</h2>
+            `;
+        }
+    </script>
+</body>
+</html>
